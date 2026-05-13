@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Basit 2 Kişilik Oyun</title>
+    <style>
+        body
+        {
+            background-color: darkgrey;
+        }
+    </style>
+</head>
+<body style="text-align: center; background: darkgrey">
+
+    <h2>Puan: <span id="skor">0 - 0</span></h2>
+    <canvas id="saha" width="400" height="400" style="border: 2px solid white; background:rgb(51, 51, 51);"></canvas>
+
+    <script>
+        var canvas = document.getElementById("saha");
+        var c = canvas.getContext("2d");
+
+
+        let p1Y = 170, p2Y = 170; // Raketlerin koordinatları
+        let topX = 200, topY = 200; // Top koordinatları
+        let hizX = 2, hizY = 3; // Top hızı
+        let p1Skor = 0, p2Skor = 0;
+
+        // Tuş Kontrolü
+        let tuslar = {};
+        document.onkeydown = (e) => tuslar[e.key] = true;
+        document.onkeyup = (e) => tuslar[e.key] = false;
+
+        function oyun() {
+            c.clearRect(0, 0, 400, 400); // Ekranı temizle
+
+            if (tuslar["w"] && p1Y > 0) p1Y -= 5;
+            if (tuslar["s"] && p1Y < 350) p1Y += 5;
+            c.fillStyle = "green";
+            c.fillRect(10, p1Y, 10, 50);
+
+            if (tuslar["ArrowUp"] && p2Y > 0) p2Y -= 5;
+            if (tuslar["ArrowDown"] && p2Y < 350) p2Y += 5;
+            c.fillStyle = "yellow";
+            c.fillRect(380, p2Y, 10, 50);
+
+            // Top Hareketi
+            topX += hizX;
+            topY += hizY;
+
+            // Kenarlara çarpma
+            if (topY <= 0 || topY >= 390) hizY *= -1;
+
+            // Vurma Anı
+            // Sol raket 
+            if (topX < 20 && topY > p1Y && topY < p1Y + 50) hizX *= -1;
+            // Sağ raket 
+            if (topX > 370 && topY > p2Y && topY < p2Y + 50) hizX *= -1;
+
+            // Skor
+            if (topX < 0) {
+                p2Skor++;
+                sifirla();
+            }
+            if (topX > 400) {
+                p1Skor++;
+                sifirla();
+            }
+
+            // Top
+            c.fillStyle = "pink";
+            c.fillRect(topX, topY, 10, 10);
+
+            requestAnimationFrame(oyun);
+        }
+
+        function sifirla() {
+            topX = 200; topY = 200;
+            hizX *= -1; // Topu kaybeden tarafa doğru gönder
+            document.getElementById("skor").innerText = p1Skor + " - " + p2Skor;
+        }
+
+        oyun(); 
+    </script>
+    <a href="index.html">Ana Sayfaya Dön</a>
+</body>
+</html>
